@@ -38,13 +38,14 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
 // ------
 
 // Debug UI
-const gui = new GUI()
+// const gui = new GUI()
 
 const canvas = document.querySelector('canvas.webgl') // Canvas
 
 const scene = new THREE.Scene() // Scene
-const axesHelper = new THREE.AxesHelper(2)
-scene.add(axesHelper)
+scene.background = new THREE.Color({ color: 'slategray' })
+// const axesHelper = new THREE.AxesHelper(2)
+// scene.add(axesHelper)
 
 /**
  * Textures
@@ -108,7 +109,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(1, 1, 2)
+camera.position.set(1, 2, 4)
 scene.add(camera)
 
 // Controls
