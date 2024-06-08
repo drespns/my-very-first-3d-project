@@ -1,14 +1,16 @@
-# Three.js Journey
+# My Very First Project 🚀
 
-## Setup
+![Vercel](./vercel/first-project.png)
+
+## ⚙️ Setup
 Download [Node.js](https://nodejs.org/en/download/).
 Run this followed commands:
 
 ```bash
-# Install dependencies (only the first time)
+# Install dependencies
 npm install
 
-# Run the local server at localhost:8080
+# Run the local server
 npm run dev
 
 # Build for production in the dist/ directory
@@ -17,12 +19,9 @@ npm run build
 
 Instead of doing `npm run build`, we are going to use **Vercel**.
 
-- 'Modern' hosting solution
-- Continuous integration (_CI_), automatisation of testing, deployment, etc.
-- Developer friendly
-- Easy setup
-- For complex or simple projects
-
+### ⚙️ Local Setup
 ```bash
 npm install vercel
+npm audit fix
+npm audit fix --force
 ```

@@ -2,6 +2,29 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FontLoader, TextGeometry } from 'three/examples/jsm/Addons.js'
 import GUI from 'lil-gui'
+// --------------------------------------------------------------------------
+
+// Event Handlers:
+window.addEventListener('resize', () =>
+{
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+
+// window.addEventListener('keydown', function(event){
+//     if (event.key == 'h'){
+//         gui.show( gui._hidden ) // toggling
+//     }
+// })
 
 // Fonts:
 const myText = "drespns"
@@ -37,8 +60,20 @@ fontLoader.load("/fonts/helvetiker_regular.typeface.json", (font) => {
 
 // ------
 
-// Debug UI
-// const gui = new GUI()
+// Debug UI: const gui = new GUI()
+// const gui = new dat.GUI({
+//     width: 250,
+//     title: 'Debug UI',
+//     closeFolders: false,
+// })
+// const debugObject = {}
+// debugObject.color = 'indigo'
+// debugObject.wireframe = false
+// debugObject.axesHelperVisibility = true
+// debugObject.spin = () => {
+//     gsap.to(torus.rotation, {y: torus.rotation.y + 2*Math.PI, duration: 2, delay: 0});
+//     gsap.to(torus.rotation, {y: torus.rotation.y - 2*Math.PI, delay: 2, duration: 1});
+// }
 
 const canvas = document.querySelector('canvas.webgl') // Canvas
 
@@ -60,11 +95,13 @@ matcapDonutTexture.colorSpace = THREE.SRGBColorSpace
  * Objects
  */
 
-// OPTIMIZATION
+// 
 const donutGeometry = new THREE.TorusGeometry(.3, .25, 32, 64)
 const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapDonutTexture })
+donutMaterial.side = THREE.DoubleSide
 console.time('donuts')
-for (let i = 1; i < 100; i++){
+let donuts = [];
+for (let i = 5; i < 150; i++){
     const donut = new THREE.Mesh(
         donutGeometry,
         donutMaterial
@@ -74,35 +111,23 @@ for (let i = 1; i < 100; i++){
     const z = (Math.random() - .5) * i
     donut.position.set(x, y, z)
 
-    const xRotation = Math.random() * Math.PI
-    const yRotation = Math.random() * Math.PI
-    donut.rotation.x = xRotation
-    donut.rotation.y = yRotation
+    // const xRotation = Math.random() * Math.PI
+    // const yRotation = Math.random() * Math.PI
+    // donut.rotation.x = xRotation
+    // donut.rotation.y = yRotation
+    const xRotation = - Math.random() * 0.1; // Define rotation speed on x-axis
+    const yRotation = Math.random() * 0.25; // Define rotation speed on y-axis
+    donut.userData.rotationSpeed = { x: xRotation, y: yRotation };
+    // userData <- <<An object that can be used to store custom data about the Object3D.>>
     scene.add(donut)
+    donuts.push(donut)
 }; console.timeEnd('donuts') // 
 
-/**
- * Sizes
- */
-const sizes = {
+
+const sizes = { // sizes
     width: window.innerWidth,
     height: window.innerHeight
 }
-
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
 
 /**
  * Camera
@@ -133,6 +158,21 @@ const clock = new THREE.Clock()
 const frame = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+
+    // donut.rotation.x = -.15 * (elapsedTime * 2*Math.PI)
+    // donut.rotation.y = .25 * (elapsedTime * 2*Math.PI)
+    // Animating each donut:
+    donuts.forEach((donut) => {
+        // const xRotation = (Math.random() - 1) * .25
+        // const yRotation = (Math.random()) * .25
+        donut.rotation.x = -.15 * (elapsedTime * 2 * Math.PI);
+        donut.rotation.y = .25 * (elapsedTime * 2 * Math.PI);
+    });
+    // donuts.forEach(donut => {
+    //     const { x: xSpeed, y: ySpeed } = donut.userData.rotationSpeed;
+    //     donut.rotation.x += xSpeed * elapsedTime;
+    //     donut.rotation.y += ySpeed * elapsedTime;
+    // });
 
     controls.update() // updating controls
     renderer.render(scene, camera) // rendering
